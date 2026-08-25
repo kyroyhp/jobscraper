@@ -3,9 +3,9 @@ from asyncio import run as async_run
 from asyncio import CancelledError
 from console_logger import log
 from config_loader import load_config
-from connection_checker import waiting_internet_connection
-
-config = ""
+from connection_checker import waiting_network_connection
+from proxy_service import get_proxy_list
+from jobs_scraper import search_jobs
 
 async def main_loop():
     try:
@@ -14,10 +14,19 @@ async def main_loop():
         config = load_config()
         log("Config done")
         while True:
-            waiting_network_connection()
-            return False
+            waiting_network_connection(config["network"]["check_interval"])
+            log("Loading proxies...")
+            proxy_list = get_proxy_list(config)
+            log(f"Loaded proxies: {len(proxy_list)}")
+            log("Searching jobs...")
+            jobs = search_jobs(config, proxy_list)
+            log(f"Found jobs: {len(jobs)}")
+            await async_sleep(config["service"]["interval"])
+
+    except CancelledError:
+        log("Service cancelled")
     except Exception as e:
-        log(f"Main script crush:{e}")
+        log(f"Main script crashed: {e}")
     finally:
         log("!!! SERVICE TERMINATED !!!")
 

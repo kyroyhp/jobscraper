@@ -2,7 +2,7 @@ from socket import create_connection
 from time import sleep
 from console_logger import log
 
-network_status = True
+network_status = None
 
 def check_connection(host="8.8.8.8", port=443, timeout=3):
     try:
@@ -11,23 +11,18 @@ def check_connection(host="8.8.8.8", port=443, timeout=3):
     except OSError:
         return False
 
-def waiting_internet_connection(check_interval=10):
+def waiting_network_connection(check_interval):
     global network_status
-
-    if check_connection():
-        if not network_status:
-            log("Internet connection restored!")
-        network_status = True
-        return
-
-    if network_status:
-        log("Internet connection lost!")
+    while True:
+        connected = check_connection()
+        if connected:
+            if network_status is False:
+                log("Internet connection restored!")
+            network_status = True
+            return True
+        if network_status is not False:
+            log("Internet connection lost!")
         network_status = False
-
-    while not check_connection():
         log("Waiting internet connection...")
-        log(f"Retry connection after {check_interval} seconds...")
+        log(f"Retry after "f"{check_interval} seconds...")
         sleep(check_interval)
-
-    log("Internet connection restored!")
-    network_status = True
