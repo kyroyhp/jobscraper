@@ -1,24 +1,25 @@
 import sys
-from yaml import safe_load, dump
+from yaml import safe_load
 from os.path import dirname, abspath, join, exists
 from console_logger import log
 
-CONFIG_FILE_NAME = "config.yaml"
+DEFAULT_CONFIG_FILE_NAME = "config.yaml"
 
-# get application directory
 def get_app_dir():
+    # if .exe file
     if getattr(sys, 'frozen', False):
         return dirname(sys.executable)
+    # if .py file
     return dirname(abspath(__file__))
 
 def get_config_path():
-    return join(get_app_dir(), CONFIG_FILE_NAME)
+    return join(get_app_dir(), DEFAULT_CONFIG_FILE_NAME)
 
 def create_default_config(path):
     try:
         log("Creating a default config file...")
         with open(path, "w", encoding="utf-8") as f:
-            f.write(DEFAULT_CONFIG_FILE)
+            f.write(DEFAULT_CONFIG_FILE_NAME)
         log("Please open the 'config.yaml' and fill in the required fields.")
         input("Press 'Enter' after editing the config file")
     except Exception as e:
@@ -26,13 +27,12 @@ def create_default_config(path):
 
 def load_config():
     path = get_config_path()
-    if not exist(path):
-        log("'config.yaml' not found.")
+    if not exists(path):
+        log("File 'config.yaml' not found.")
         create_default_config(path)
-
-    with open(path, "r" encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return safe_load(f)
-
+# todo validating function
 def validate_config(cfg):
     errors = []
     
