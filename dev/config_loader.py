@@ -13,6 +13,7 @@ network:
 
 proxy:
   enabled: true
+  retries: 5
   timeout: 10
 
 scraper:
@@ -66,5 +67,5 @@ def load_config():
         validate_config(cfg)
         return cfg
     except Exception as e:
-        log(f"Can't load configuration}")
+        log("Can't load configuration")
         raise

@@ -11,7 +11,7 @@ def check_connection(host="8.8.8.8", port=443, timeout=3):
     except OSError:
         return False
 
-def waiting_network_connection(check_interval):
+def waiting_network_connection(config):
     global network_status
     while True:
         connected = check_connection()
@@ -24,5 +24,5 @@ def waiting_network_connection(check_interval):
             log("Internet connection lost!")
         network_status = False
         log("Waiting internet connection...")
-        log(f"Retry after "f"{check_interval} seconds...")
+        log(f"Retry after {config['network']['check_interval']} seconds...")
         sleep(check_interval)

@@ -5,13 +5,11 @@ from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
 from config_loader import load_config
 from console_logger import log
-from connection_checker import waiting_internet_connection
+from connection_checker import waiting_network_connection
 
-config = load_config()
-
-def find_proxies():
+def get_proxy_list(config):
     while True:
-        waiting_internet_connection()
+        waiting_network_connection(config)
 
         try:
             url = 'https://free-proxy-list.net/'
@@ -32,19 +30,19 @@ def find_proxies():
             if proxies:
                 return proxies
 
-            log(f"The proxy list is empty. Retry after {config['RETRY_DELAY']} seconds...")
-            sleep(config['RETRY_DELAY'])
+            log(f"The proxy list is empty. Retry after {config['proxy']['timeout']} seconds...")
+            sleep(config['proxy']['timeout'])
 
         except RequestException as e:
             log(f"Error fetching proxy list: {e}")
-            sleep(config['RETRY_DELAY'])
+            sleep(config['proxy']['timeout'])
 
 def retry_request(url, params=None):
     while True:
-        waiting_internet_connection()
+        waiting_internet_connection(config)
 
         proxies = find_proxies()
-        for attempt in range(1, config['PROXY_RETRIES'] + 1):
+        for attempt in range(1, config['proxy']['retries'] + 1):
             proxy = {'http': random.choice(proxies)}
             try:
                 response = request_get(
@@ -56,8 +54,8 @@ def retry_request(url, params=None):
                 response.raise_for_status()
                 return response
             except RequestException as e:
-                log(f"Attempt {attempt}/{config['PROXY_RETRIES']} connection with proxy failed: {e}")
-                sleep(config['RETRY_DELAY']/2)
+                log(f"Attempt {attempt}/{config['proxy']['retries']} connection with proxy failed: {e}")
+                sleep(config['network']['timeout']/2)
 
-        log(f"All attempts failed. Retry after {config['RETRY_DELAY']} seconds...")
-        sleep(config['RETRY_DELAY'])
+        log(f"All attempts failed. Retry after {config['proxy']['timeout']} seconds...")
+        sleep(config['proxy']['timeout'])
