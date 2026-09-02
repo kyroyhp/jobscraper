@@ -18,6 +18,11 @@ proxy:
 
 scraper:
   timeout: 20
+  pages:
+    - "https://hh.ru/search/vacancy?text=программист"
+    - "https://hh.ru/search/vacancy?text=разработчик"
+    - "https://hh.ru/search/vacancy?text=developer"
+    - "https://hh.ru/search/vacancy?text=backend"
 """
 
 def get_app_dir():

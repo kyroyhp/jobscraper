@@ -1,3 +1,22 @@
+# Config
+config.yaml
+
+# Scraped vacancies
+jobs.csv
+jobs.json
+
+# Export folders
+exports/
+data/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

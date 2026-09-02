@@ -5,8 +5,9 @@ from console_logger import log
 from config_loader import load_config
 from connection_checker import waiting_network_connection
 from proxy_service import get_proxy_list
-# from jobs_scraper import search_jobs
-
+from jobs_scraper import search_jobs
+from exporters.csv_exporter import save_to_csv
+from exporters.json_exporter import save_to_json
 async def main_loop():
     try:
         log("!!! SERVICE STARTED !!!")
@@ -15,15 +16,23 @@ async def main_loop():
         log("Config done")
         while True:
             waiting_network_connection(config)
-            log("Loading proxies...")
             proxy_list = get_proxy_list(config)
             log(f"Loaded proxies: {len(proxy_list)}")
-            print(proxy_list)
             log("Searching jobs...")
-           # jobs = search_jobs(config, proxy_list)
-           # log(f"Found jobs: {len(jobs)}")
-            await async_sleep(config["service"]["interval"])
-
+            jobs = search_jobs(
+                config,
+                proxy_list
+            )
+            log(f"Found jobs: {len(jobs)}")
+            save_to_csv(jobs)
+            save_to_json(jobs)
+            log("Jobs saved")
+            log("Remove old proxies...")
+            proxy_list.clear()
+            log(f"Next iteration after {config['service']['interval']}")
+            await async_sleep(
+                config["service"]["interval"]
+            )
     except CancelledError:
         log("Service cancelled")
     except Exception as e:
@@ -33,6 +42,5 @@ async def main_loop():
 
 def main():
     async_run(main_loop())
-
 if __name__ == "__main__":
     main()
