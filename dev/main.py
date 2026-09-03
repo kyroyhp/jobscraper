@@ -29,7 +29,7 @@ async def main_loop():
             log("Jobs saved")
             log("Remove old proxies...")
             proxy_list.clear()
-            log(f"Next iteration after {config['service']['interval']}")
+            log(f"Next iteration after {config['service']['interval']} sec")
             await async_sleep(
                 config["service"]["interval"]
             )

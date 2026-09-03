@@ -6,23 +6,20 @@ from console_logger import log
 DEFAULT_CONFIG_FILE_NAME = "config.yaml"
 DEFAULT_CONFIG = """
 service:
-  interval: 300
+  interval: 3600 # Interval between script loop 3600sec=1hour
 
 network:
-  check_interval: 10
+  check_interval: 10 # Interval between attempts to check internet connection
 
 proxy:
-  enabled: true
-  retries: 5
-  timeout: 10
+  enabled: true # true/false to enable/disable proxy service
+  retries: 5 # Attempts trying proxy
+  timeout: 10 # Waiting for a response from the server
 
 scraper:
-  timeout: 20
+  timeout: 10 # Waiting for a response from the server
   pages:
-    - "https://hh.ru/search/vacancy?text=программист"
-    - "https://hh.ru/search/vacancy?text=разработчик"
-    - "https://hh.ru/search/vacancy?text=developer"
-    - "https://hh.ru/search/vacancy?text=backend"
+    - "https://hh.ru/search/vacancy?text=" # Enter search properties here 'text='
 """
 
 def get_app_dir():
